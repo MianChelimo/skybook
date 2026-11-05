@@ -73,14 +73,21 @@
                                 </p>
                             </div>
 
-                            <div>
-                                <p class="text-sm text-gray-500">Price per passenger</p>
-                                <p class="text-2xl font-bold text-blue-900">
-                                    KSh {{ number_format((float) $flight->price, 2) }}
-                                </p>
-                            </div>
+                            
+                                <div>
+                                    <p class="text-sm text-gray-500">Price per passenger</p>
+                                    <p class="text-2xl font-bold text-blue-900">
+                                        KSh {{ number_format((float) $flight->price, 2) }}
+                                    </p>
 
-                        </div>
+                                    <a href="{{ route('bookings.create', $flight) }}"
+                                    class="mt-4 inline-block rounded-lg bg-blue-700 px-6 py-3 font-semibold text-white hover:bg-blue-800">
+                                        Book Now
+                                    </a>
+                             </div>
+
+
+                           </div>
                     </div>
                 @endforeach
             </div>

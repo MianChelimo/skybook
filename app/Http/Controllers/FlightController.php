@@ -12,7 +12,7 @@ class FlightController extends Controller
         $request->validate([
             'origin' => ['required', 'string', 'max:100'],
             'destination' => ['required', 'string', 'max:100'],
-           'departure_date' => [
+            'departure_date' => [
                 'nullable',
                 'date',
                 'after_or_equal:today',
@@ -34,5 +34,16 @@ class FlightController extends Controller
             ->get();
 
         return view('flights.results', compact('flights'));
+    }
+
+    public function available()
+    {
+        $flights = Flight::query()
+            ->where('available_seats', '>', 0)
+            ->where('departure_time', '>', now())
+            ->orderBy('departure_time')
+            ->get();
+
+        return view('flights.available', compact('flights'));
     }
 }

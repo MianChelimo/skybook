@@ -26,4 +26,8 @@ class Flight extends Model
             'available_seats' => 'integer',
         ];
     }
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
 }

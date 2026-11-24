@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Flight;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class FlightController extends Controller
 {
@@ -36,10 +37,12 @@ class FlightController extends Controller
         ]);
 
         Flight::create($validated);
+        Cache::forget('skybook:all_flights');
 
         return redirect()
             ->route('admin.flights.index')
-            ->with('success', 'Flight added successfully!');
+            ->with('success', 'Flight added successfully!')
+            ->with('error', 'Something went wrong, please try again.');
     }
 
     // Display one flight
@@ -69,10 +72,14 @@ class FlightController extends Controller
         ]);
 
         $flight->update($validated);
+        Cache::forget('skybook:all_flights');
+
 
         return redirect()
             ->route('admin.flights.index')
-            ->with('success', 'Flight updated successfully!');
+            ->with('success', 'Flight updated successfully!')
+            ->with('error', 'Something went wrong, please try again.');
+
     }
 
     // Delete a flight

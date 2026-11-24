@@ -26,8 +26,19 @@ class Flight extends Model
             'available_seats' => 'integer',
         ];
     }
+
     public function bookings()
     {
         return $this->hasMany(Booking::class);
+    }
+    
+    public function fares()
+    {
+    return $this->hasMany(FlightFare::class);
+    }
+
+    public function seats()
+    {
+    return $this->hasMany(FlightSeat::class);
     }
 }

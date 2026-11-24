@@ -72,7 +72,7 @@
         </div>
 
         <form method="POST"
-              action="{{ route('bookings.store', $flight) }}"
+      action="{{ route('bookings.passengers.store', $flight) }}"
               class="bg-white rounded-xl shadow p-6">
 
             @csrf
@@ -94,21 +94,14 @@
                 class="w-full border rounded-lg p-3"
             >
 
-            <div class="mt-5 bg-blue-50 p-4 rounded-lg">
-                <p class="text-slate-600">Price per passenger</p>
-                <p class="font-semibold">
-                    KES {{ number_format($flight->price, 2) }}
-                </p>
-
-                <p class="text-slate-600 mt-3">Estimated total</p>
-                <p id="total-price" class="text-2xl font-bold text-blue-700">
-                    KES {{ number_format($flight->price, 2) }}
-                </p>
-            </div>
+            <p class="text-sm text-slate-500 mt-2">
+                You can book for up to 9 passengers at a time.
+            </p>
+            <div id="passenger-details" class="mt-6 space-y-6"></div>
 
             <button type="submit"
                     class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold p-3 rounded-lg mt-6">
-                Confirm Booking
+                Next:Select Seats
             </button>
 
         </form>
@@ -116,23 +109,82 @@
     </main>
 
     <script>
-        const passengersInput = document.getElementById('passengers');
-        const totalPrice = document.getElementById('total-price');
-        const pricePerPassenger = {{ $flight->price }};
+    const passengersInput = document.getElementById('passengers');
+    const passengerDetails = document.getElementById('passenger-details');
 
-        function updateTotal() {
-            const passengers = Number(passengersInput.value) || 0;
-            const total = passengers * pricePerPassenger;
+    function generatePassengerForms() {
+        const numberOfPassengers = Number(passengersInput.value) || 0;
 
-            totalPrice.textContent = 'KES ' + total.toLocaleString(
-                'en-KE',
-                { minimumFractionDigits: 2, maximumFractionDigits: 2 }
-            );
+        passengerDetails.innerHTML = '';
+
+        for (let i = 1; i <= numberOfPassengers; i++) {
+
+            const passengerForm = document.createElement('div');
+
+            passengerForm.className = 'bg-slate-50 border rounded-xl p-5';
+
+            passengerForm.innerHTML = `
+                
+    <h3 class="text-lg font-bold mb-4">
+        Passenger ${i}
+    </h3>
+
+    <div class="grid grid-cols-2 gap-4">
+
+        <div>
+            <label class="block mb-2 font-medium">
+                First Name
+            </label>
+
+            <input
+                type="text"
+                name="passengers_data[${i}][first_name]"
+                required
+                class="w-full border rounded-lg p-3"
+            >
+        </div>
+
+        <div>
+            <label class="block mb-2 font-medium">
+                Last Name
+            </label>
+
+            <input
+                type="text"
+                name="passengers_data[${i}][last_name]"
+                required
+                class="w-full border rounded-lg p-3"
+            >
+        </div>
+
+        <div class="col-span-2">
+            <label class="block mb-2 font-medium">
+                Travel Class
+            </label>
+
+            <select
+                name="passengers_data[${i}][travel_class]"
+                class="w-full border rounded-lg p-3 travel-class"
+                required
+            >
+                <option value="">Choose Travel Class</option>
+                <option value="economy">Economy</option>
+                <option value="business">Business Class</option>
+                <option value="first_class">First Class</option>
+            </select>
+        </div>
+
+    </div>    
+`;
+
+            passengerDetails.appendChild(passengerForm);
         }
+    }
 
-        passengersInput.addEventListener('input', updateTotal);
-        updateTotal();
-    </script>
+    passengersInput.addEventListener('input', generatePassengerForms);
+
+    generatePassengerForms();
+</script>
 
 </body>
 </html>

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Flight;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 
 class FlightController extends Controller
 {
@@ -36,14 +38,22 @@ class FlightController extends Controller
         return view('flights.results', compact('flights'));
     }
 
-    public function available()
-    {
-        $flights = Flight::query()
-            ->where('available_seats', '>', 0)
-            ->where('departure_time', '>', now())
-            ->orderBy('departure_time')
-            ->get();
+   public function available()
+{
+    $flights = Flight::hydrate(
+        Cache::remember('skybook:available_flights', 300, function () {
+            return Flight::query()
+                ->where('available_seats', '>', 0)
+                ->where('departure_time', '>', now())
+                ->orderBy('departure_time')
+                ->get()
+                ->toArray();
+        })
+    );
 
-        return view('flights.available', compact('flights'));
+    return view('flights.available', compact('flights'));
+
     }
+
 }
+

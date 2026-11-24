@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Actions\Fortify\SendPhoneOtp;
+
 use Laravel\Fortify\Actions\AttemptToAuthenticate;
 use Laravel\Fortify\Actions\CanonicalizeUsername;
 use Laravel\Fortify\Actions\EnsureLoginIsNotThrottled;
@@ -63,27 +63,8 @@ class FortifyServiceProvider extends ServiceProvider
         });
         Fortify::redirects('login', '/dashboard');
         
-Fortify::authenticateThrough(function (Request $request) {
-    return array_filter([
-        config('fortify.limiters.login')
-            ? null
-            : EnsureLoginIsNotThrottled::class,
 
-        config('fortify.lowercase_usernames')
-            ? CanonicalizeUsername::class
-            : null,
 
-        Features::enabled(Features::twoFactorAuthentication())
-            ? RedirectsIfTwoFactorAuthenticatable::class
-            : null,
-
-        AttemptToAuthenticate::class,
-
-        SendPhoneOtp::class,
-
-        PrepareAuthenticatedSession::class,
-    ]);
-});
 
 
         // Configure Fortify user actions.
@@ -101,9 +82,7 @@ Fortify::authenticateThrough(function (Request $request) {
             ResetUserPassword::class
         );
 
-        Fortify::redirectUserForTwoFactorAuthenticationUsing(
-            RedirectIfTwoFactorAuthenticatable::class
-        );
+        
 
         // Limit login attempts.
         RateLimiter::for('login', function (Request $request) {
